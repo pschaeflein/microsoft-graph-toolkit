@@ -34,6 +34,8 @@ export class MgtAgenda extends MgtTemplatedComponent {
     return styles;
   }
 
+  public temp: any;
+
   /**
    * array containg events from user agenda.
    * @type {Array<MicrosoftGraph.Event>}
@@ -55,7 +57,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
   public groupByDay = false;
 
   /**
-   * stores current date for intial calender selection in events.
+   * stores current date for initial calender selection in events.
    * @type {string}
    */
   @property({
@@ -122,6 +124,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
   constructor() {
     super();
     this.onResize = this.onResize.bind(this);
+    console.log('constructor, ', this.temp);
   }
 
   /**
@@ -134,6 +137,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
    * * @param _changedProperties Map of changed properties with old values
    */
   public firstUpdated() {
+    console.log('firstUpdated, ', this.temp);
     this._firstUpdated = true;
     Providers.onProviderUpdated(() => this.loadData());
     this.loadData();
@@ -144,6 +148,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
    * @memberof MgtAgenda
    */
   public connectedCallback() {
+    console.log('connectedCallback, ', this.temp);
     this._isNarrow = this.offsetWidth < 600;
     super.connectedCallback();
     window.addEventListener('resize', this.onResize);
@@ -167,6 +172,8 @@ export class MgtAgenda extends MgtTemplatedComponent {
    * @memberof MgtAgenda
    */
   public attributeChangedCallback(name, oldValue, newValue) {
+    console.log('attributechanged ', name);
+    console.log('attributechangedcallback, ', this.temp);
     if (oldValue !== newValue && (name === 'date' || name === 'days' || name === 'group-id')) {
       this.events = null;
       this.loadData();
@@ -181,6 +188,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
    * @memberof MgtAgenda
    */
   public render() {
+    console.log('render, ', this.temp);
     this._isNarrow = this.offsetWidth < 600;
     return html`
       <div class="agenda ${this._isNarrow ? 'narrow' : ''}">
@@ -194,6 +202,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
   }
 
   private async loadData() {
+    console.log('load data, ', this.temp);
     if (this.events) {
       return;
     }
@@ -205,7 +214,6 @@ export class MgtAgenda extends MgtTemplatedComponent {
     const p = Providers.globalProvider;
     if (p && p.state === ProviderState.SignedIn) {
       this._loading = true;
-
       if (this.eventQuery) {
         try {
           const tokens = this.eventQuery.split('|');
@@ -227,6 +235,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
           const results = await request.get();
 
           if (results && results.value) {
+            console.log('updating, ', this.temp);
             this.events = results.value;
           }
           // tslint:disable-next-line: no-empty
@@ -238,6 +247,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
         end.setDate(start.getDate() + this.days);
         try {
           this.events = await p.graph.getEvents(start, end, this.groupId);
+          console.log('updating2, ', this.temp);
         } catch (error) {
           // noop - possible error with graph
         }
