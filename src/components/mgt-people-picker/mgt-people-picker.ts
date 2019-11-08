@@ -320,14 +320,7 @@ export class MgtPeoplePicker extends MgtTemplatedComponent {
       let people: any;
 
       if (provider && provider.state === ProviderState.SignedIn) {
-        const that = this;
-        let loading = true;
-
-        setTimeout(() => {
-          if (loading) {
-            that.isLoading = true;
-          }
-        }, 400);
+        this.isLoading = true;
 
         const client = Providers.globalProvider.graph;
 
@@ -345,7 +338,6 @@ export class MgtPeoplePicker extends MgtTemplatedComponent {
         }
 
         this.people = this.filterPeople(people);
-        loading = false;
         this.isLoading = false;
       }
     } else {
